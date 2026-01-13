@@ -1,8 +1,15 @@
 package main
 
-func main() {
-	// TODO: init config
+import (
+	"fmt"
+	"url-shortener/internal/config"
+)
 
+func main() {
+	config := config.MustLoad()
+
+	fmt.Println(config)
+	
 	// TODO: init logger
 
 	// TODO: init storage
