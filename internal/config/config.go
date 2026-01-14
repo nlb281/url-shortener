@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
@@ -34,16 +35,20 @@ func MustLoad() *Config {
 		log.Fatal("Config path is required. Use --config or -c flag")
 	}
 
-	_, err := os.Stat(configPath)
-
-	if os.IsNotExist(err) {
-    log.Fatalf("Config file does not exist: %s", configPath)
-  }
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		log.Fatalf("Config file does not exist: %s", configPath)
+	}
 
 	var cfg Config
 
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
 		log.Fatalf("Can't read config: %s", err)
+	}
+
+	configDir := filepath.Dir(configPath)
+
+	if !filepath.IsAbs(cfg.StoragePath) {
+		cfg.StoragePath = filepath.Join(configDir, cfg.StoragePath)
 	}
 
 	return &cfg

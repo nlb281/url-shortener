@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"url-shortener/internal/config"
+	"url-shortener/internal/storage/db"
 )
 
 const (
@@ -21,7 +22,13 @@ func main() {
 
 	log.Info("starting url-shortener", slog.String("env", config.Env))
 	
-	// TODO: init storage
+	storage, err := db.New(config.StoragePath)
+	if err != nil {
+		log.Error("failed to init storage", err)
+		os.Exit(1)
+	}
+
+	_ = storage
 
 	// TODO: init router
 
