@@ -15,10 +15,6 @@ type Storage struct {
 	db *sql.DB
 }
 
-func (s *Storage) SaveURl(param1 string, param2 string) {
-	panic("unimplemented")
-}
-
 func New(path string) (*Storage, error) {
 	const op = "storage.db.New"
 
@@ -63,12 +59,15 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(urlToSave, alias)
+	result, err := stmt.Exec(urlToSave, alias)
 	if err != nil {
+		if storage.IsUniqueConstraint(err) {
+			return 0, storage.ErrAliasExists
+		}
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	id, err := res.LastInsertId()
+	id, err := result.LastInsertId()
 	if err != nil {
 		return 0, fmt.Errorf("%s: failed to get last insert id: %w", op, err)
 	}
@@ -107,12 +106,12 @@ func (s *Storage) DeleteURL(alias string) (error) {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(alias)
+	result, err := stmt.Exec(alias)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	n, err := res.RowsAffected()
+	n, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
