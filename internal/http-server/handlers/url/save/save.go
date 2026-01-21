@@ -19,7 +19,7 @@ type Request struct {
 
 type Response struct {
 	res.Response
-	Alias string `json:alias,omitempty`
+	Alias string `json:"alias,omitempty"`
 }
 
 type URLSaver interface {

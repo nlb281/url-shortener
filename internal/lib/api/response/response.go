@@ -2,14 +2,20 @@ package response
 
 type Response struct {
 	Status string `json:"status"`
-	Error  string `json:error,omitempty`
-	Alias  string `json:alias,omitempty`
+	Error  string `json:"error,omitempty"`
 }
 
 const (
-	StatusOK    = "OK"
-	StatusError = "Error"
+	StatusOK     = "OK"
+	StatusError  = "Error"
+	StatusDelete = "Deleted"
 )
+
+func Delete() Response {
+	return Response{
+		Status: StatusDelete,
+	}
+}
 
 func OK() Response {
 	return Response{
